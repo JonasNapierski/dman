@@ -1,4 +1,6 @@
 #include "../include/ui.h"
+#include <curses.h>
+#include <ncurses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,5 +37,16 @@ int main(void) {
     s(containers, 2);
 
     free(containers);
+
+    char ch;
+    initscr();
+
+    noecho();
+    while ((ch = getch()) != 'q') {
+        printf("You pressed: %c\n\r", ch);
+        refresh();
+    }
+
+    endwin();
     return 0;
 }
