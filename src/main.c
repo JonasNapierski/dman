@@ -14,7 +14,12 @@ typedef struct Container {
 
 void s(Container *containers, int container_amount) {
     for (int i = 0; i < container_amount; i++) {
-        printf("%d [ ] %s\n", i, containers[i].container_name);
+        char status = ' ';
+
+        if (containers[i].is_selected) {
+            status = 'x';
+        }
+        printf("%d [%c] %s\n", i, status, containers[i].container_name);
     }
 }
 
