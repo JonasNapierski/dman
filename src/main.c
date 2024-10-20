@@ -19,7 +19,7 @@ void s(Container *containers, int container_amount) {
         if (containers[i].is_selected) {
             status = 'x';
         }
-        printf("%d [%c] %s\n", i, status, containers[i].container_name);
+        printw("%d [%c] %s\n", i, status, containers[i].container_name);
     }
 }
 
@@ -39,8 +39,6 @@ int main(void) {
     containers[0] = c1;
     containers[1] = c2;
 
-    s(containers, 2);
-
     free(containers);
 
     char ch;
@@ -48,7 +46,7 @@ int main(void) {
 
     noecho();
     while ((ch = getch()) != 'q') {
-        printf("You pressed: %c\n\r", ch);
+        s(containers, 2);
         refresh();
     }
 
