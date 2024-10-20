@@ -1,7 +1,10 @@
 #include "../include/engine.h"
+#include "../include/ui.h"
 #include <cjson/cJSON.h>
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include <curses.h>
+#include <ncurses.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,7 +23,7 @@ void s(Container *containers, int container_amount) {
         if (containers[i].is_selected) {
             status = 'x';
         }
-        printf("%d [%c] %s\n", i, status, containers[i].container_name);
+        printw("%d [%c] %s\n", i, status, containers[i].container_name);
     }
 }
 
@@ -48,8 +51,6 @@ int main(void) {
     containers[0] = c1;
     containers[1] = c2;
 
-    s(containers, 2);
-
     free(containers);
     containers = NULL;
 
@@ -57,43 +58,39 @@ int main(void) {
     CURLcode res;
     struct curl_slist *headers = NULL;
 
-    // Initialize a curl session
     curl = curl_easy_init();
     if (curl) {
-        // Set the URL (endpoint) to the Docker socket and API
         curl_easy_setopt(curl, CURLOPT_URL,
                          "http://localhost/v1.47/containers/json?all=true");
-
-        // Use the Docker socket for communication
         curl_easy_setopt(curl, CURLOPT_UNIX_SOCKET_PATH,
                          "/var/run/docker.sock");
-
-        // Specify the HTTP method as GET
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-
-        // Add the required headers
         headers = curl_slist_append(headers, "Content-Type: application/json");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-
-        // Set the write callback function to handle the response
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-
         curl_easy_setopt(curl, CURLOPT_WRITEDATA,
-                         stdout); // Print the response to stdout
-
-        // Perform the request, res will get the return code
+                         stdout);
         res = curl_easy_perform(curl);
 
-        // Check for errors
         if (res != CURLE_OK) {
             fprintf(stderr, "curl_easy_perform() failed: %s\n",
                     curl_easy_strerror(res));
             return -1;
         }
 
-        // Cleanup
         curl_slist_free_all(headers);
         curl_easy_cleanup(curl);
     }
+
+    char ch;
+    initscr();
+
+    noecho();
+    while ((ch = getch()) != 'q') {
+        s(containers, 2);
+        refresh();
+    }
+
+    endwin();
     return 0;
 }

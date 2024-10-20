@@ -25,7 +25,7 @@ FORMATTER := clang-format
 # 	-pedantic: Enable pedantic warnings
 # 	-lm: Link to libm
 CFLAGS := -std=gnu17 -D _GNU_SOURCE -D __STDC_WANT_LIB_EXT1__ -Wall -Wextra -pedantic
-LDFLAGS := -lm -lcjson -lcurl
+LDFLAGS := -lm -lncurses -lcjson -lcurl
 
 ifeq ($(debug), 1)
 	CFLAGS := $(CFLAGS) -g -O0
