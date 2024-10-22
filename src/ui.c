@@ -26,6 +26,7 @@ UIElement *checkbox(int y, int x, bool is_checked, const char *text) {
     elem->payload.checkbox = *box;
     elem->type = UI_CHECKBOX;
     elem->next = NULL;
+    elem->prev = NULL;
 
     return elem;
 }

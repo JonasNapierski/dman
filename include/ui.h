@@ -33,6 +33,7 @@ typedef struct UIElement {
     int x;
     int y;
     struct UIElement *next;
+    struct UIElement *prev;
 
 } UIElement;
 
