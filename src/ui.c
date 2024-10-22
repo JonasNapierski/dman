@@ -1,27 +1,65 @@
 #include "../include/ui.h"
+#include <curses.h>
 #include <ncurses.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <time.h>
 
-Checkbox_t *checkbox(bool isHovered, bool isChecked, const char *text) {
+UIElement* checkbox(int y, int x, bool is_checked, const char *text) {
 
     if (text == NULL) {
         return NULL; // invalid text
     }
 
-    Checkbox_t *box = (Checkbox_t *)malloc(sizeof(Checkbox_t));
+    UICheckbox *box = (UICheckbox *)malloc(sizeof(UICheckbox));
 
-    if (box == NULL) {
+    UIElement *elem = (UIElement*)malloc(sizeof(UIElement));
+
+    if (box == NULL || elem == NULL) {
         return NULL; // not enough memory
     }
+    box->text = text;
+    box->is_checked = is_checked;
 
-    Checkbox_t box_ = {
-        text,
-        isHovered,
-        isChecked,
-    };
+    elem->x = x;
+    elem->y = y;
+    elem->data.checkbox = *box;
+    elem->type = UI_CHECKBOX;
+    elem->next = NULL;
 
-    printw("[%c] %s\n",  ' ', text);
 
-    box = &box_;
-    return box;
+    return elem;
+}
+
+
+
+void ui_draw_checkbox(WINDOW *win, UICheckbox *box, int x, int y, bool is_highlighted)
+{
+    if (box == NULL || win == NULL)
+    {
+        return; // SOMETHIGN WENT WRONG DURING 
+    }
+
+    move(y, x);
+    wprintw(win, "[");
+
+    if (is_highlighted)
+    {
+        wattron(win, A_REVERSE);
+    }
+    wprintw(win, "%c", box->is_checked ? 'x' : ' ');
+    wattroff(win, A_REVERSE);
+    wprintw(win, "] %s", box->text);
+    
+}
+
+
+void ui_draw(WINDOW *win, UIElement ui, bool is_highligthed) {
+    switch (ui.type) {
+        case UI_CHECKBOX:
+            ui_draw_checkbox(win, &ui.data, ui.x, ui.y,  is_highligthed);
+            break;
+        default:
+            break;
+    }
 }
