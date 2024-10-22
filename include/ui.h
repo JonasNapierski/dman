@@ -13,7 +13,7 @@ typedef struct {
 
 typedef struct {
     const char *text;
-    void (*action)(); 
+    void (*action)();
 
 } UIButton;
 
@@ -27,16 +27,16 @@ typedef union {
     UIButton button;
 } UIELementData;
 
-typedef struct UIElement{
+typedef struct UIElement {
     UIElementType type;
-    UIELementData data;
+    UIELementData payload;
     int x;
     int y;
     struct UIElement *next;
 
 } UIElement;
 
-UIElement* checkbox(int y, int x, bool is_checked, const char *text);
+UIElement *checkbox(int y, int x, bool is_checked, const char *text);
 
 void ui_draw(WINDOW *win, UIElement ui, bool is_highligthed);
 

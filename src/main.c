@@ -2,6 +2,7 @@
 
 #include <curses.h>
 #include <ncurses.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,40 +29,42 @@ int main(void) {
     containers[0] = c1;
     containers[1] = c2;
 
-    free(containers);
-    containers = NULL;
+    UIElement *selected;
 
-    UICheckbox *check = checkbox(false, false, c1.container_name);
+    UIElement *head = checkbox(0, 10, false, c1.container_name); // start
+    UIElement *check2 = checkbox(1, 10, true, c1.container_name);
+
+    head->next = check2; // create an another
+    selected = head;
+
     char ch;
     initscr();
 
+    curs_set(false);
     noecho();
+    nocrmode();
     nodelay(stdscr, true);
+
+    // render loop for the ui
     while ((ch = getch()) != 'q') {
-        checkbox_draw(check, 10, 8);
-        checkbox_draw(check, 10, 9);
-        checkbox_draw(check, 10, 10);
-        checkbox_draw(check, 10, 11);
-        move(8, 11);
+        UIElement *curr = head;
+        bool isRunning = true;
 
-        if (ch == 'x') {
-            check->selected = !check->selected;
+        while (isRunning) {
+            ui_draw(stdscr, *curr, selected == curr);
+            isRunning = curr->next != NULL;
+            curr = curr->next;
         }
 
-        if (ch == 'j') {
-            
-            move(newY, 11);
-        }
-
-        if (ch == 'k') {
-            int newY = getcury(stdscr) - 1;
-            move(newY, 11);
-        }
 
         refresh();
     }
     nodelay(stdscr, false);
 
     endwin();
+    // end ui
+    free(containers);
+    containers = NULL;
+
     return 0;
 }
