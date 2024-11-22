@@ -12,4 +12,5 @@
 
 #define ENGINE_H
 
+int request_docker_api();
 #endif
