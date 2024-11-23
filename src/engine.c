@@ -16,6 +16,17 @@
 #include <string.h>
 
 typedef struct {
+    char *id;
+    char *image;
+    char *image_id;
+    char *state;
+    char *status;
+    unsigned int created;
+    char **names;
+
+} Container;
+
+typedef struct {
     unsigned char *buffer;
     size_t len;
     size_t buflen;
@@ -40,7 +51,13 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     return realsize;
 }
 
-int request_docker_api() {
+int request_docker_api(Container *c) {
+
+    // return error if container pointer is not set correctly 
+    if (c == NULL) {
+        return -1;
+    }
+
     CURL *curl;
     CURLcode res;
     struct curl_slist *headers = NULL;
