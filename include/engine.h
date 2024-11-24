@@ -12,5 +12,16 @@
 
 #define ENGINE_H
 
-int request_docker_api();
+typedef struct {
+    char *id;
+    char *image;
+    char *image_id;
+    char *state;
+    char *status;
+    unsigned int created;
+    char **names;
+
+} Container;
+
+int request_docker_api(Container *c);
 #endif

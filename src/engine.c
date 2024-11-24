@@ -6,6 +6,7 @@
 // - status
 //
 // method stop,start list all container
+#include "../include/engine.h"
 
 #include <cjson/cJSON.h>
 #include <curl/curl.h>
@@ -14,17 +15,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct {
-    char *id;
-    char *image;
-    char *image_id;
-    char *state;
-    char *status;
-    unsigned int created;
-    char **names;
-
-} Container;
 
 typedef struct {
     unsigned char *buffer;
@@ -51,9 +41,13 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     return realsize;
 }
 
+/* Returns number of containers. Pointer to a container in memory
+ *
+ *
+ * */
 int request_docker_api(Container *c) {
 
-    // return error if container pointer is not set correctly 
+    // return error if container pointer is not set correctly
     if (c == NULL) {
         return -1;
     }
@@ -93,12 +87,28 @@ int request_docker_api(Container *c) {
     const cJSON *response = NULL;
     const cJSON *elem = NULL;
     const cJSON *image = NULL;
+    const cJSON *id = NULL;
+    const cJSON *image_id = NULL;
+    const cJSON *state = NULL;
+    const cJSON *status = NULL;
+    const cJSON *created = NULL;
+    const cJSON *names = NULL;
 
     response = cJSON_Parse(raw_json);
     elem = cJSON_GetArrayItem(response, 0);
     image = cJSON_GetObjectItemCaseSensitive(elem, "Image");
-    printf("Array len: %i", cJSON_GetArraySize(response));
-    printf("Object len: %i", cJSON_GetArraySize(elem));
-    printf("Name: %s", cJSON_GetStringValue(image));
-    return 0;
+    id = cJSON_GetObjectItemCaseSensitive(elem, "Id");
+    image_id = cJSON_GetObjectItemCaseSensitive(elem, "ImageId");
+    state = cJSON_GetObjectItemCaseSensitive(elem, "State");
+    status = cJSON_GetObjectItemCaseSensitive(elem, "Status");
+    created = cJSON_GetObjectItemCaseSensitive(elem, "Created");
+    names = cJSON_GetObjectItemCaseSensitive(elem, "Names");
+
+    c->image = cJSON_GetStringValue(image);
+    c->id = cJSON_GetStringValue(id);
+    c->image_id = cJSON_GetStringValue(image_id);
+    c->state = cJSON_GetStringValue(state);
+    c->status = cJSON_GetStringValue(status);
+    c->created = cJSON_GetNumberValue(created);
+    return 1;
 }
