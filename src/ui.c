@@ -5,7 +5,8 @@
 #include <sys/types.h>
 #include <time.h>
 
-UIElement *checkbox(int y, int x, bool is_checked, const char *text) {
+UIElement *checkbox(int y, int x, bool is_checked, const char *text,
+                    void *data) {
 
     if (text == NULL) {
         return NULL; // invalid text
@@ -27,6 +28,7 @@ UIElement *checkbox(int y, int x, bool is_checked, const char *text) {
     elem->type = UI_CHECKBOX;
     elem->next = NULL;
     elem->prev = NULL;
+    elem->data = data; // maps data
 
     return elem;
 }

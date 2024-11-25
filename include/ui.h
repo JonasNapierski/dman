@@ -34,10 +34,11 @@ typedef struct UIElement {
     int y;
     struct UIElement *next;
     struct UIElement *prev;
-
+    void *data;
 } UIElement;
 
-UIElement *checkbox(int y, int x, bool is_checked, const char *text);
+UIElement *checkbox(int y, int x, bool is_checked, const char *text,
+                    void *data);
 
 void ui_draw(WINDOW *win, UIElement ui, bool is_highligthed);
 

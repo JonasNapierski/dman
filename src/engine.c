@@ -98,17 +98,35 @@ int request_docker_api(Container *c) {
     elem = cJSON_GetArrayItem(response, 0);
     image = cJSON_GetObjectItemCaseSensitive(elem, "Image");
     id = cJSON_GetObjectItemCaseSensitive(elem, "Id");
-    image_id = cJSON_GetObjectItemCaseSensitive(elem, "ImageId");
+    image_id = cJSON_GetObjectItemCaseSensitive(elem, "ImageID");
     state = cJSON_GetObjectItemCaseSensitive(elem, "State");
     status = cJSON_GetObjectItemCaseSensitive(elem, "Status");
     created = cJSON_GetObjectItemCaseSensitive(elem, "Created");
     names = cJSON_GetObjectItemCaseSensitive(elem, "Names");
 
-    c->image = cJSON_GetStringValue(image);
-    c->id = cJSON_GetStringValue(id);
-    c->image_id = cJSON_GetStringValue(image_id);
-    c->state = cJSON_GetStringValue(state);
-    c->status = cJSON_GetStringValue(status);
-    c->created = cJSON_GetNumberValue(created);
+    if (image != NULL) {
+        strcpy(c->image, cJSON_GetStringValue(image));
+    }
+
+    if (id != NULL) {
+        strcpy(c->id, cJSON_GetStringValue(id));
+    }
+
+    if (image_id != NULL) {
+        strcpy(c->image_id, cJSON_GetStringValue(image_id));
+    }
+
+    if (state != NULL) {
+        strcpy(c->state, cJSON_GetStringValue(state));
+    }
+
+    if (status != NULL) {
+        strcpy(c->status, cJSON_GetStringValue(status));
+    }
+
+    if (created != NULL) {
+        c->created = cJSON_GetNumberValue(created);
+    }
+
     return 1;
 }

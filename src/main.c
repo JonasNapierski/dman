@@ -12,14 +12,12 @@
 #define MAX_CONTAINER_NAME_LEN 100
 
 int main(void) {
-    Container *c1 = (Container *)malloc(sizeof(Container));
-    request_docker_api(c1);
-
-    Container *containers = malloc(2 * sizeof(Container));
+    Container c1;
+    int container_amount = request_docker_api(&c1);
 
     UIElement *container_selected;
     UIElement *container_head;
-    UIElement *container_checkbox = checkbox(0, 10, false, c1->image); // start
+    UIElement *container_checkbox = checkbox(0, 10, false, c1.image, &c1);
 
     // set the head to the first element;
     container_head = container_checkbox;
@@ -53,6 +51,13 @@ int main(void) {
                 !container_selected->payload.checkbox.is_checked;
 
             break;
+        case '\n':
+            Container cont = *(Container *)container_selected->data;
+            wprintw(stdscr, "State %s", cont.state);
+            wprintw(stdscr, "Status %s", cont.state);
+            wprintw(stdscr, "Created %f", cont.created);
+
+            break;
         default:
             break;
         }
@@ -70,9 +75,6 @@ int main(void) {
     nodelay(stdscr, false);
 
     endwin();
-    // end ui
-    free(containers);
-    containers = NULL;
 
     return 0;
 }
