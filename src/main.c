@@ -1,6 +1,7 @@
 #include "../include/engine.h"
 #include "../include/ui.h"
 
+#include <complex.h>
 #include <curses.h>
 #include <ncurses.h>
 #include <stdbool.h>
@@ -25,12 +26,14 @@ int main(void) {
 
     char ch;
     initscr();
+    int max_width = getmaxx(stdscr);
 
     curs_set(false);
     noecho();
     nocrmode();
     nodelay(stdscr, true);
-
+    bool is_active_infobox = false;
+    WINDOW *infobox;
     // render loop for the ui
     while ((ch = getch()) != 'q') {
         switch (ch) {
@@ -52,10 +55,22 @@ int main(void) {
 
             break;
         case '\n':
-            Container cont = *(Container *)container_selected->data;
-            wprintw(stdscr, "State %s", cont.state);
-            wprintw(stdscr, "Status %s", cont.state);
-            wprintw(stdscr, "Created %f", cont.created);
+            is_active_infobox = is_active_infobox == false;
+
+            if (is_active_infobox) {
+                Container cont = *(Container *)container_selected->data;
+                infobox = newwin(40, max_width - 20, 10, 10);
+                refresh();
+                box(infobox, 0, 0);
+                mvwprintw(infobox, 1, 1, "State %s", cont.state);
+                mvwprintw(infobox, 2, 1, "Status %s", cont.state);
+                mvwprintw(infobox, 3, 1, "Created %f", cont.created);
+                wrefresh(infobox);
+
+            } else {
+                werase(infobox);
+                wrefresh(infobox);
+            }
 
             break;
         default:
@@ -73,7 +88,7 @@ int main(void) {
         refresh();
     }
     nodelay(stdscr, false);
-
+    delwin(infobox);
     endwin();
 
     return 0;
