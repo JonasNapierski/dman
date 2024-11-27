@@ -59,4 +59,3 @@ void ui_draw(WINDOW *win, UIElement ui, bool is_highligthed) {
         break;
     }
 }
-

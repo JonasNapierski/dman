@@ -6,11 +6,14 @@
 
 typedef enum DmanState {
     INITIALIZED,
-    RUNNING
+    RUNNING,
+    STOPPED,
+    ERROR,
 } DmanState_t;
 
 typedef struct {
     DmanState_t state;
+    int debug_mode; // this modes allows for extra logging etc.
     WINDOW *current;
 } Dman;
 
