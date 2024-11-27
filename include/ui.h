@@ -28,6 +28,7 @@ typedef union {
 } UIELementData;
 
 typedef struct UIElement {
+    WINDOW *win;
     UIElementType type;
     UIELementData payload;
     int x;
