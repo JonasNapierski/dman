@@ -13,12 +13,27 @@
 #define MAX_CONTAINER_NAME_LEN 100
 
 int main(void) {
-    Container c1;
-    int container_amount = request_docker_api(&c1);
+    int x = 4;
+    Container **c1 = (Container **)malloc(x * sizeof(Container));
+
+    for (int i = 0; i < x; i++) {
+        Container *c0 = (Container *)malloc(sizeof(Container));
+        c0->created = -1;
+        c0->id = NULL;
+        c0->image = NULL;
+        c0->image_id = NULL;
+        c0->names = NULL;
+        c0->state = NULL;
+        c0->status = NULL;
+
+        c1[i] = c0;
+    }
+
+    int container_amount = engine_get_containers(c1, 4);
 
     UIElement *container_selected;
     UIElement *container_head;
-    UIElement *container_checkbox = checkbox(0, 10, false, c1.image, &c1);
+    UIElement *container_checkbox = checkbox(0, 10, false, c1[0]->image, &c1);
 
     // set the head to the first element;
     container_head = container_checkbox;
@@ -34,6 +49,7 @@ int main(void) {
     nodelay(stdscr, true);
     bool is_active_infobox = false;
     WINDOW *infobox;
+
     // render loop for the ui
     while ((ch = getch()) != 'q') {
         switch (ch) {

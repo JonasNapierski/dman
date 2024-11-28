@@ -50,6 +50,10 @@ void ui_draw_checkbox(WINDOW *win, UICheckbox *box, int x, int y,
     wprintw(win, "] %s", box->text);
 }
 
+void ui_init() {}
+
+void ui_handle() {}
+
 void ui_draw(WINDOW *win, UIElement ui, bool is_highligthed) {
     switch (ui.type) {
     case UI_CHECKBOX:

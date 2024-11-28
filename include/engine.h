@@ -11,19 +11,16 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#define CONTAINER_MAX_STRING 255
-#define CONTAINER_MAX_NAMES 16
-
 typedef struct {
-    char id[CONTAINER_MAX_STRING];
-    char image[CONTAINER_MAX_STRING];
-    char image_id[CONTAINER_MAX_STRING];
-    char state[CONTAINER_MAX_STRING];
-    char status[CONTAINER_MAX_STRING];
+    char *id;
+    char *image;
+    char *image_id;
+    char *state;
+    char *status;
     double created;
-    char names[CONTAINER_MAX_STRING][CONTAINER_MAX_NAMES];
+    char **names;
 
 } Container;
 
-int request_docker_api(Container *c);
+int engine_get_containers(Container **containers, int max_container);
 #endif
