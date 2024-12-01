@@ -31,7 +31,16 @@ size_t write_callback(char *ptr, size_t size, size_t nmemb, void *userdata) {
     printf("receive chunk of %zu bytes\n", realsize);
 
     while (req->buflen < req->len + realsize + 1) {
-        req->buffer = realloc(req->buffer, req->buflen + CHUNK_SIZE);
+        unsigned char *new_buffer =
+            realloc(req->buffer, req->buflen + CHUNK_SIZE);
+
+        if (new_buffer == NULL) {
+            printf(stderr,
+                   "Memory error duing realloc of received chunk of bytes\n");
+            return -1;
+        }
+
+        req->buffer = new_buffer;
         req->buflen += CHUNK_SIZE;
     }
     memcpy(&req->buffer[req->len], ptr, realsize);
@@ -96,16 +105,18 @@ size_t request_docker_api(get_request *req, char *url) {
     CURLcode res;
     struct curl_slist *headers = NULL;
 
-
     curl = curl_easy_init();
     if (curl) {
         curl_easy_setopt(curl, CURLOPT_URL, url);
-        curl_easy_setopt(curl, CURLOPT_UNIX_SOCKET_PATH, "/var/run/docker.sock"); // FIXME: this must be an configurable variable DOCKER_SOCKET_PATH
+        curl_easy_setopt(curl, CURLOPT_UNIX_SOCKET_PATH,
+                         "/var/run/docker.sock");
+        // FIXME: this must be an configurable
+        // variable DOCKER_SOCKET_PATH
         curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
         headers = curl_slist_append(headers, "Content-Type: application/json");
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&req);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)req);
 
         res = curl_easy_perform(curl);
 
@@ -133,11 +144,7 @@ int engine_get_containers(Container **containers, int max_container) {
         return -1;
     }
 
-    get_request req;
-    // reset request object to be used again;
-    req.buffer = NULL;
-    req.len = 0;
-    req.buflen = 0;
+    get_request req = {0};
 
     size_t amount_request_data = request_docker_api(
         &req, "http://localhost/v1.47/containers/json?all=true");

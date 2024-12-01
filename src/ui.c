@@ -57,7 +57,9 @@ void ui_handle() {}
 void ui_draw(WINDOW *win, UIElement ui, bool is_highligthed) {
     switch (ui.type) {
     case UI_CHECKBOX:
-        ui_draw_checkbox(win, &ui.payload, ui.x, ui.y, is_highligthed);
+        UICheckbox *box = &ui.payload.checkbox;
+
+        ui_draw_checkbox(win, box, ui.x, ui.y, is_highligthed);
         break;
     default:
         break;
